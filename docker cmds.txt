@@ -1,0 +1,13 @@
+docker run --name jobping-db \
+  -e POSTGRES_PASSWORD=RoyalsStink816@ \
+  -e POSTGRES_USER=jobping-admin \
+  -e POSTGRES_DB=jobping \
+  -v jobping-data:/var/lib/postgresql \
+  -p 5432:5432 \
+  -d postgres
+
+docker exec -it jobping-db psql -U jpbping-admin -d postgres
+
+docker stop jobping-db
+
+docker start jobping-db

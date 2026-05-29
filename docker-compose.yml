@@ -1,0 +1,14 @@
+services:
+postgres:
+  image: postgres:18.1
+  restart: always
+  environment:
+    POSTGRES_USER: jobping-admin
+    POSTGRES_PASSWORD: RoyalsStink816@
+    POSTGRES_DB: jobping-db
+  ports:
+    - "5432:5432"
+  volumes:
+    - jobping_data:/var/lib/postgresql
+volumes:
+  jobping_data:
