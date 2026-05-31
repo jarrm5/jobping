@@ -11,3 +11,6 @@ docker exec -it jobping-db psql -U jpbping-admin -d postgres
 docker stop jobping-db
 
 docker start jobping-db
+
+#start interactive CLI postgres - keywords are case sensitive (i.e. SELECT not select)
+docker exec -it jobping-db psql -U jobping-admin -d jobping
