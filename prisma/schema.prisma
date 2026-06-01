@@ -12,14 +12,15 @@ datasource db {
   provider = "postgresql"
 }
 
-model User { 
-  id    Int     @id @default(autoincrement()) 
-  email String  @unique
-  name  String?
-  password String
-  role //enum here for "homeowner|provider"
-  zip_code
-} 
+//model User { 
+//  id    Int     @id @default(autoincrement()) 
+//  email String  @unique
+//  name  String?
+//  password String
+//  role //enum here for "homeowner|provider"
+//  zip_code
+//} 
+
 model Jobs { 
   id        Int     @id @default(autoincrement()) 
   title     String
@@ -30,4 +31,5 @@ model Jobs {
   homeowner_id
   provider_id (nullable)
   created_at
+  updated_at
 } 

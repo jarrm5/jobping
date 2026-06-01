@@ -5,7 +5,7 @@ postgres:
   environment:
     POSTGRES_USER: jobping-admin
     POSTGRES_PASSWORD: RoyalsStink816@
-    POSTGRES_DB: jobping-db
+    POSTGRES_DB: jobping
   ports:
     - "5432:5432"
   volumes:
