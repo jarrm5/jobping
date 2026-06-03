@@ -1,7 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// This is your Prisma schema file.
+// Learn more in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client"
@@ -12,24 +10,20 @@ datasource db {
   provider = "postgresql"
 }
 
-//model User { 
-//  id    Int     @id @default(autoincrement()) 
-//  email String  @unique
-//  name  String?
-//  password String
-//  role //enum here for "homeowner|provider"
-//  zip_code
-//} 
+enum JobStatus {
+  open
+  claimed
+}
 
-model Jobs { 
-  id        Int     @id @default(autoincrement()) 
-  title     String
-  description   String?
-  category
-  zip_code
-  status ("open" | "claimed")
-  homeowner_id
-  provider_id (nullable)
-  created_at
-  updated_at
-} 
+model Job {
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String?
+  category     String
+  zip_code     String
+  status       JobStatus
+  homeowner_id Int
+  provider_id  Int?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+}
