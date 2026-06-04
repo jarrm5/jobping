@@ -6,10 +6,10 @@
   "license": "ISC",
   "author": "James Rinella",
   "type": "module",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node index.ts",
+    "dev": "nodemon index.ts",
     "db:deploy": "npx prisma migrate deploy && npx prisma generate"
   },
   "dependencies": {
