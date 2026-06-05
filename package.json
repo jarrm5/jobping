@@ -8,8 +8,8 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
-    "start": "node index.ts",
-    "dev": "nodemon index.ts",
+    "start": "tsx index.ts",
+    "dev": "tsx watch index.ts",
     "db:deploy": "npx prisma migrate deploy && npx prisma generate"
   },
   "dependencies": {
@@ -17,14 +17,15 @@
     "@prisma/client": "^7.8.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "pg": "^8.21.0",
-    "typescript": "^6.0.3"
+    "pg": "^8.21.0"
   },
   "devDependencies": {
     "@types/node": "^25.9.0",
     "@types/pg": "^8.20.0",
     "nodemon": "^3.1.11",
     "prisma": "^7.8.0",
-    "tsx": "^4.22.3"
+    "ts-node": "^10.9.2",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
   }
 }
