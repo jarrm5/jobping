@@ -25,5 +25,5 @@ model Job {
   homeowner_id Int
   provider_id  Int?
   created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
 }
