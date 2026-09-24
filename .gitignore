@@ -1,0 +1,6 @@
+backend/node_modules
+frontend/node_modules
+sql samples
+.env
+generated
+docker cmds.txtnode_modules
