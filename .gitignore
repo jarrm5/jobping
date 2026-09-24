@@ -1,4 +1,5 @@
 node_modules
+sql samples
 .env
 generated
 docker cmds.txt
