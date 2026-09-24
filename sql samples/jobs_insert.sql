@@ -1,0 +1,2 @@
+INSERT INTO "Job"(title, description, category, zip_code, status, homeowner_id, provider_id)
+	VALUES ('Millipede infestation in my basement', 'Looking for an extermintor for this issue.', 'Bug Extermintor', '64154', 'open', 1, NULL);
