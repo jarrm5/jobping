@@ -4,3 +4,4 @@ sql samples
 .env
 generated
 docker cmds.txtnode_modules
+.DS_Store
