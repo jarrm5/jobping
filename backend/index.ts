@@ -1,7 +1,7 @@
 //const express = require("express");
 import "dotenv/config";
 import express from "express";
-import { PrismaClient } from "./generated/prisma/client";
+import { PrismaClient, type Job } from "./generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const databaseUrl = process.env.DATABASE_URL;
@@ -43,7 +43,7 @@ app.get("/", async (req, res) => {
         ? "No jobs have been added yet."
         : `${jobCount} jobs have been added to the database\n.` +
             allJobs.map(
-              (job) =>
+              (job: Job) =>
                 `\n${job.title} - ${job.description} - ${job.category}\n`,
             ),
     );
