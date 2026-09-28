@@ -18,7 +18,7 @@ export default function JobCard({ job, onClaim }: JobCardProps) {
   const isOpen = job.status === "open";
 
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:shadow-md">
+    <article className="grid h-full grid-rows-[auto_1fr_auto] rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <h2 className="text-lg font-semibold text-slate-900">{job.title}</h2>
         <span
@@ -35,11 +35,11 @@ export default function JobCard({ job, onClaim }: JobCardProps) {
         </span>
       </div>
 
-      <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">
+      <p className="mt-3 mb-4 min-h-[96px] text-sm leading-6 text-slate-600">
         {job.description}
       </p>
 
-      <div className="mt-auto border-t border-slate-200 pt-4">
+      <div className="border-t border-slate-200 pt-4">
         <div className="flex items-center justify-between text-xs text-slate-500">
           <span>Created</span>
           <span>{formatDate(job.created_at)}</span>
