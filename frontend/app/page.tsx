@@ -1,5 +1,7 @@
 "use client";
 
+import axios from "axios";
+import { useEffect, useState } from "react";
 import JobsGrid, { type Job } from "../src/components/JobsGrid";
 
 const initialJobs: Job[] = [
@@ -45,6 +47,41 @@ const initialJobs: Job[] = [
 ];
 
 export default function Home() {
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:3001";
+  const [jobs, setJobs] = useState<Job[]>(initialJobs);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/jobs`);
+
+        const payload = response.data;
+
+        if (Array.isArray(payload)) {
+          setJobs(payload);
+          return;
+        }
+
+        if (
+          payload &&
+          typeof payload === "object" &&
+          Array.isArray((payload as { jobs?: Job[] }).jobs)
+        ) {
+          setJobs((payload as { jobs: Job[] }).jobs);
+          return;
+        }
+
+        setJobs(initialJobs);
+      } catch (error) {
+        console.error("Could not load jobs from the backend:", error);
+        setJobs(initialJobs);
+      }
+    };
+
+    void fetchJobs();
+  }, [apiUrl]);
+
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 lg:px-10">
       <div className="mx-auto max-w-6xl">
@@ -57,7 +94,7 @@ export default function Home() {
           </h1>
         </header>
 
-        <JobsGrid jobs={initialJobs} />
+        <JobsGrid jobs={jobs} />
       </div>
     </main>
   );

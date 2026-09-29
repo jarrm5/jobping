@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 //Get all jobs
-app.get("/", async (req, res) => {
+app.get("/jobs", async (req, res) => {
   const jobCount = await prisma.job.count();
   const allJobs = await prisma.job.findMany();
   res
