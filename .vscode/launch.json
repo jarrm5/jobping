@@ -1,0 +1,30 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug frontend",
+      "url": "http://localhost:3001",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug backend",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}\\backend\\index.ts",
+      "runtimeArgs": [
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
+      "outFiles": ["${workspaceFolder}/**/*.(m|c|)js", "!**/node_modules/**"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
