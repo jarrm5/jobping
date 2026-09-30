@@ -1,7 +1,7 @@
 //const express = require("express");
 import "dotenv/config";
 import express from "express";
-import { PrismaClient, type Job } from "./generated/prisma/client";
+import { PrismaClient } from "./generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const databaseUrl = process.env.DATABASE_URL;
@@ -32,21 +32,25 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-//Get all jobs
+// Get all jobs
 app.get("/jobs", async (req, res) => {
-  const jobCount = await prisma.job.count();
   const allJobs = await prisma.job.findMany();
-  res
-    .status(200)
-    .json(
-      jobCount == 0
-        ? "No jobs have been added yet."
-        : `${jobCount} jobs have been added to the database\n.` +
-            allJobs.map(
-              (job: Job) =>
-                `\n${job.title} - ${job.description} - ${job.category}\n`,
-            ),
-    );
+
+  const jobs = allJobs.map((job) => ({
+    id: job.id,
+    title: job.title,
+    description: job.description,
+    category: job.category,
+    zipcode: job.zip_code,
+    zipCode: job.zip_code,
+    status: job.status,
+    homeownerId: job.homeowner_id,
+    providerId: job.provider_id ?? null,
+    created_at: job.created_at,
+    updated_at: job.updated_at,
+  }));
+
+  res.status(200).json(jobs);
 });
 const PORT = 3000;
 app.listen(PORT, () => {
