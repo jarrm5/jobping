@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Debug frontend",
       "url": "http://localhost:3001",
-      "webRoot": "${workspaceFolder}"
+      "webRoot": "${workspaceFolder}/frontend"
     },
     // {
     //   "type": "node",

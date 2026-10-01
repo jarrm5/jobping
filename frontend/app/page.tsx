@@ -48,7 +48,7 @@ const initialJobs: Job[] = [
 
 export default function Home() {
   const apiUrl =
-    process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:3000";
+    process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:4000";
   const [jobs, setJobs] = useState<Job[]>(initialJobs);
 
   useEffect(() => {

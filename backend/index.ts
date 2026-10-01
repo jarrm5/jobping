@@ -52,7 +52,7 @@ app.get("/jobs", async (req, res) => {
 
   res.status(200).json(jobs);
 });
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
