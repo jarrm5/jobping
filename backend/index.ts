@@ -1,6 +1,6 @@
 //const express = require("express");
 import "dotenv/config";
-import express from "express";
+import express, { type Request, type Response } from "express";
 import { PrismaClient } from "./generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
@@ -21,7 +21,7 @@ const prisma = new PrismaClient({
 });
 
 //cors
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 // Get all jobs
-app.get("/jobs", async (req, res) => {
+app.get("/jobs", async (req: Request, res: Response) => {
   const allJobs = await prisma.job.findMany();
 
   const jobs = allJobs.map((job) => ({
