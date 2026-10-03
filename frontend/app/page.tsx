@@ -2,49 +2,11 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
+import sampleJobsData from "../../sample_json_data/jobs.json";
 import JobsGrid, { type Job } from "../src/components/JobsGrid";
 
-const initialJobs: Job[] = [
-  {
-    id: 1,
-    title: "Fix kitchen sink leak",
-    description:
-      "Replace worn-out faucet supply lines and tighten the drain connection to stop the water leak under the sink.",
-    category: "Plumbing",
-    zipCode: "10001",
-    status: "open",
-    homeownerId: 42,
-    providerId: null,
-    created_at: "2026-09-20T09:00:00.000Z",
-    updated_at: "2026-09-20T09:00:00.000Z",
-  },
-  {
-    id: 2,
-    title: "Paint bedroom wall",
-    description:
-      "Two accent walls need prep, patching, and a fresh coat of warm white paint before move-in.",
-    category: "Painting",
-    zipCode: "10002",
-    status: "claimed",
-    homeownerId: 51,
-    providerId: 1,
-    created_at: "2026-09-22T13:30:00.000Z",
-    updated_at: "2026-09-24T16:15:00.000Z",
-  },
-  {
-    id: 3,
-    title: "Install ceiling fan",
-    description:
-      "Mount a ceiling fan in the bedroom and wire it to the existing switch for improved airflow.",
-    category: "Electrical",
-    zipCode: "10005",
-    status: "closed",
-    homeownerId: 66,
-    providerId: 2,
-    created_at: "2026-09-15T08:45:00.000Z",
-    updated_at: "2026-09-17T11:20:00.000Z",
-  },
-];
+const initialJobs: Job[] =
+  (sampleJobsData as { jobs?: Job[] }).jobs ?? [];
 
 export default function Home() {
   const apiUrl =

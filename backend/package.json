@@ -9,7 +9,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "tsx index.ts",
-    "dev": "tsx watch index.ts",
+    "dev": "nodemon -e js,ts,json index.ts",
     "db:deploy": "npx prisma migrate deploy && npx prisma generate"
   },
   "dependencies": {
