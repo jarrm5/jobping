@@ -45,6 +45,14 @@ app.get("/jobs", async (req: Request, res: Response) => {
 });
 
 //route for updating job
+app.put("/jobs/:id", async (req: Request, res: Response) => {
+  //const jobId = parseInt(req.params.id, 10);
+  //const updatedJobData = req.body;
+  //const jobIndex = jobs.findIndex((job) => job.id === jobId);
+  res
+    .status(200)
+    .json({ message: "Job updated successfully " + req.params.id });
+});
 
 //route for fetching job by provider id
 
