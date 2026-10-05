@@ -5,8 +5,8 @@ generator client {
   provider               = "prisma-client"
   output                 = "./generated/prisma"
   generatedFileExtension = "ts" // Forces internal imports to match your .ts files
+  importFileExtension    = "ts"
 }
-
 
 datasource db {
   provider = "postgresql"
