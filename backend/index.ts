@@ -52,7 +52,6 @@ app.put("/jobs/:id", async (req: Request, res: Response) => {
   if ("description" in body) updateData.description = body.description;
   if ("category" in body) updateData.category = body.category;
   if ("zipcode" in body) updateData.zip_code = body.zipcode;
-  if ("zipCode" in body) updateData.zip_code = body.zipCode;
   if ("status" in body) {
     const allowed = ["open", "claimed"];
     if (!allowed.includes(body.status)) {
@@ -60,9 +59,9 @@ app.put("/jobs/:id", async (req: Request, res: Response) => {
     }
     updateData.status = body.status;
   }
-  if ("providerId" in body) {
-    const val = body.providerId === null ? null : Number(body.providerId);
-    if (body.providerId !== null && !Number.isInteger(val)) {
+  if ("provider_id" in body) {
+    const val = body.provider_id === null ? null : Number(body.provider_id);
+    if (body.provider_id !== null && !Number.isInteger(val)) {
       return res.status(400).json({ error: "Invalid providerId" });
     }
     updateData.provider_id = val;

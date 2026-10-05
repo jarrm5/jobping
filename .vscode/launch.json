@@ -11,27 +11,12 @@
       "url": "http://localhost:3001",
       "webRoot": "${workspaceFolder}/frontend"
     },
-    // {
-    //   "type": "node",
-    //   "request": "launch",
-    //   "name": "Debug backend",
-    //   "skipFiles": ["<node_internals>/**"],
-    //   "program": "${workspaceFolder}/backend/index.ts",
-    //   "runtimeArgs": [
-    //     "-r",
-    //     "ts-node/register",
-    //     "-r",
-    //     "tsconfig-paths/register"
-    //   ],
-    //   "outFiles": ["${workspaceFolder}/**/*.(m|c|)js", "!**/node_modules/**"],
-    //   "console": "integratedTerminal"
-    // }
     {
       "type": "node",
       "request": "launch",
       "name": "Debug backend",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["--import", "tsx", "--inspect-brk"],
+      "runtimeArgs": ["--import", "tsx"],
       "args": ["${workspaceFolder}/backend/index.ts"],
       "cwd": "${workspaceFolder}/backend",
       "console": "integratedTerminal",
