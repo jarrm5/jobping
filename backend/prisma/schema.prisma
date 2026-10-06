@@ -15,6 +15,7 @@ datasource db {
 enum JobStatus {
   open
   claimed
+  closed
 }
 
 model Job {

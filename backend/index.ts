@@ -2,6 +2,7 @@ import "dotenv/config";
 import express, { type Request, type Response } from "express";
 import sampleJobs from "../sample_json_data/jobs.json" with { type: "json" };
 import { PrismaClient } from "./prisma/generated/prisma/client.ts";
+import { JobStatus } from "./prisma/generated/prisma/enums.ts";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const databaseUrl = process.env.DATABASE_URL;
@@ -47,22 +48,30 @@ app.put("/jobs/:id", async (req: Request, res: Response) => {
 
   const body = req.body || {};
   const updateData: any = {};
+  const allowedStatuses = Object.values(JobStatus);
 
   if ("title" in body) updateData.title = body.title;
   if ("description" in body) updateData.description = body.description;
   if ("category" in body) updateData.category = body.category;
   if ("zipcode" in body) updateData.zip_code = body.zipcode;
+  if ("zipCode" in body) updateData.zip_code = body.zipCode;
   if ("status" in body) {
-    const allowed = ["open", "claimed"];
-    if (!allowed.includes(body.status)) {
+    if (!allowedStatuses.includes(body.status)) {
       return res.status(400).json({ error: "Invalid status" });
     }
     updateData.status = body.status;
   }
+  if ("homeowner_id" in body) {
+    const val = Number(body.homeowner_id);
+    if (!Number.isInteger(val)) {
+      return res.status(400).json({ error: "Invalid homeowner_id" });
+    }
+    updateData.homeowner_id = val;
+  }
   if ("provider_id" in body) {
     const val = body.provider_id === null ? null : Number(body.provider_id);
     if (body.provider_id !== null && !Number.isInteger(val)) {
-      return res.status(400).json({ error: "Invalid providerId" });
+      return res.status(400).json({ error: "Invalid provider_id" });
     }
     updateData.provider_id = val;
   }
@@ -102,8 +111,8 @@ app.get("/jobs", async (req: Request, res: Response) => {
     category: job.category,
     zipcode: job.zip_code,
     status: job.status,
-    homeownerId: job.homeowner_id,
-    providerId: job.provider_id ?? null,
+    homeowner_id: job.homeowner_id,
+    provider_id: job.provider_id ?? null,
     created_at: job.created_at,
     updated_at: job.updated_at,
   }));
