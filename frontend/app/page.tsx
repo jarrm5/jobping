@@ -5,8 +5,25 @@ import { useEffect, useState } from "react";
 import sampleJobsData from "../../sample_json_data/jobs.json";
 import JobsGrid, { type Job } from "../src/components/JobsGrid";
 
-const initialJobs: Job[] =
-  (sampleJobsData as { jobs?: Job[] }).jobs ?? [];
+const initialJobs: Job[] = (sampleJobsData as { jobs?: Job[] }).jobs ?? [];
+
+const normalizeJob = (job: Record<string, unknown>): Job => ({
+  id: Number(job.id ?? 0),
+  title: String(job.title ?? ""),
+  description: String(job.description ?? ""),
+  category: String(job.category ?? ""),
+  zipCode: String(job.zipCode ?? job.zipcode ?? job.zip_code ?? ""),
+  status: (job.status as Job["status"]) ?? "open",
+  homeownerId: Number(job.homeownerId ?? job.homeowner_id ?? 0),
+  providerId:
+    job.providerId != null
+      ? Number(job.providerId)
+      : job.provider_id != null
+        ? Number(job.provider_id)
+        : null,
+  created_at: (job.created_at as Job["created_at"]) ?? new Date(),
+  updated_at: (job.updated_at as Job["updated_at"]) ?? new Date(),
+});
 
 export default function Home() {
   const apiUrl =
@@ -17,20 +34,23 @@ export default function Home() {
     const fetchJobs = async () => {
       try {
         const response = await axios.get(`${apiUrl}/jobs`);
-
-        const payload = response.data;
+        const payload = response?.data;
 
         if (Array.isArray(payload)) {
-          setJobs(payload);
+          setJobs((payload as Record<string, unknown>[]).map(normalizeJob));
           return;
         }
 
         if (
           payload &&
           typeof payload === "object" &&
-          Array.isArray((payload as { jobs?: Job[] }).jobs)
+          Array.isArray((payload as { jobs?: unknown[] }).jobs)
         ) {
-          setJobs((payload as { jobs: Job[] }).jobs);
+          setJobs(
+            ((payload as { jobs: Record<string, unknown>[] }).jobs ?? []).map(
+              normalizeJob,
+            ),
+          );
           return;
         }
 
@@ -56,7 +76,7 @@ export default function Home() {
           </h1>
         </header>
 
-        <JobsGrid jobs={jobs} />
+        <JobsGrid key={jobs.map((job) => job.id).join("-")} jobs={jobs} />
       </div>
     </main>
   );
