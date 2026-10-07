@@ -23,20 +23,22 @@ type JobsGridProps = {
 };
 
 export default function JobsGrid({ jobs }: JobsGridProps) {
-  const [jobList, setJobList] = useState<Job[]>(jobs);
+  const [jobList, setJobList] = useState<Job[]>(jobs.filter((job) => job.status !== "closed"));
 
   const handleClaim = (jobId: number) => {
     setJobList((currentJobs) =>
-      currentJobs.map((job) =>
-        job.id === jobId
-          ? {
-              ...job,
-              providerId: 1,
-              status: "claimed",
-              updated_at: new Date(),
-            }
-          : job,
-      ),
+      currentJobs
+        .map((job): Job =>
+          job.id === jobId
+            ? {
+                ...job,
+                providerId: 1,
+                status: "claimed",
+                updated_at: new Date(),
+              }
+            : job,
+        )
+        .filter((job) => job.status !== "closed"),
     );
   };
 
