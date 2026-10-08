@@ -13,20 +13,112 @@ datasource db {
 }
 
 enum JobStatus {
-  open
-  claimed
-  closed
+  OPEN
+  CLAIMED
+  COMPLETED
+  CANCELLED
+}
+
+enum JobUrgency {
+  ASAP
+  WITHIN_WEEK
+  FLEXIBLE
+}
+
+model Homeowner {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+
+  address   String?
+  city      String?
+  state     String?
+  zip_code  String?
+
+  latitude  Float?
+  longitude Float?
+
+  jobs      Job[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model Provider {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+
+  city      String?
+  state     String?
+  zip_code  String?
+
+  latitude  Float?
+  longitude Float?
+
+  service_radius Int @default(10)
+
+  services ProviderService[]
+
+  claimed_jobs Job[] @relation("ProviderJobs")
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model ServiceType {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  providers ProviderService[]
+  jobs      Job[]
+
+  created_at DateTime @default(now())
+}
+
+model ProviderService {
+  provider_id     Int
+  service_type_id Int
+
+  provider     Provider    @relation(fields: [provider_id], references: [id])
+  service_type ServiceType @relation(fields: [service_type_id], references: [id])
+
+  @@id([provider_id, service_type_id])
 }
 
 model Job {
-  id           Int       @id @default(autoincrement())
-  title        String
-  description  String?
-  category     String
-  zip_code     String
-  status       JobStatus
+  id          Int        @id @default(autoincrement())
+
+  title       String
+  description String?
+
+  urgency     JobUrgency
+  status      JobStatus  @default(OPEN)
+
   homeowner_id Int
   provider_id  Int?
-  created_at   DateTime  @default(now())
+
+  service_type_id Int
+
+  address   String?
+  city      String?
+  state     String?
+  zip_code  String?
+
+  latitude  Float?
+  longitude Float?
+
+  homeowner   Homeowner   @relation(fields: [homeowner_id], references: [id])
+  provider    Provider?   @relation("ProviderJobs", fields: [provider_id], references: [id])
+  service_type ServiceType @relation(fields: [service_type_id], references: [id])
+
+  created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+
+  @@index([status])
+  @@index([service_type_id])
+  @@index([zip_code])
 }
+
