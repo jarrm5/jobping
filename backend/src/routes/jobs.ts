@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import type { PrismaClient } from "../../prisma/generated/prisma/client.ts";
-import { JobStatus } from "../../prisma/generated/prisma/enums.ts";
+import { JobStatus, JobUrgency } from "../../prisma/generated/prisma/enums.ts";
 
 export default function createJobsRouter(prisma: PrismaClient) {
   const router = Router();
@@ -14,28 +14,44 @@ export default function createJobsRouter(prisma: PrismaClient) {
     const body = req.body || {};
     const updateData: any = {};
     const allowedStatuses = Object.values(JobStatus);
+    const allowedUrgencies = Object.values(JobUrgency);
 
     if ("title" in body) updateData.title = body.title;
     if ("description" in body) updateData.description = body.description;
-    if ("category" in body) updateData.category = body.category;
     if ("zipcode" in body) updateData.zip_code = body.zipcode;
     if ("zipCode" in body) updateData.zip_code = body.zipCode;
+    if ("address" in body) updateData.address = body.address;
+    if ("city" in body) updateData.city = body.city;
+    if ("state" in body) updateData.state = body.state;
+    if ("serviceTypeId" in body)
+      updateData.service_type_id = Number(body.serviceTypeId);
+    if ("service_type_id" in body)
+      updateData.service_type_id = Number(body.service_type_id);
+    if ("latitude" in body) updateData.latitude = Number(body.latitude);
+    if ("longitude" in body) updateData.longitude = Number(body.longitude);
     if ("status" in body) {
       if (!allowedStatuses.includes(body.status)) {
         return res.status(400).json({ error: "Invalid status" });
       }
       updateData.status = body.status;
     }
-    if ("homeowner_id" in body) {
-      const val = Number(body.homeowner_id);
+    if ("urgency" in body) {
+      if (!allowedUrgencies.includes(body.urgency)) {
+        return res.status(400).json({ error: "Invalid urgency" });
+      }
+      updateData.urgency = body.urgency;
+    }
+    if ("homeowner_id" in body || "homeownerId" in body) {
+      const val = Number(body.homeowner_id ?? body.homeownerId);
       if (!Number.isInteger(val)) {
         return res.status(400).json({ error: "Invalid homeowner_id" });
       }
       updateData.homeowner_id = val;
     }
-    if ("provider_id" in body) {
-      const val = body.provider_id === null ? null : Number(body.provider_id);
-      if (body.provider_id !== null && !Number.isInteger(val)) {
+    if ("provider_id" in body || "providerId" in body) {
+      const raw = body.provider_id ?? body.providerId;
+      const val = raw === null ? null : Number(raw);
+      if (raw !== null && !Number.isInteger(val)) {
         return res.status(400).json({ error: "Invalid provider_id" });
       }
       updateData.provider_id = val;
@@ -69,13 +85,19 @@ export default function createJobsRouter(prisma: PrismaClient) {
       id: job.id,
       title: job.title,
       description: job.description,
-      category: job.category,
       zipcode: job.zip_code,
       status: job.status,
-      homeowner_id: job.homeowner_id,
-      provider_id: job.provider_id ?? null,
-      created_at: job.created_at,
-      updated_at: job.updated_at,
+      homeownerId: job.homeowner_id,
+      providerId: job.provider_id ?? null,
+      createdAt: job.created_at,
+      updatedAt: job.updated_at,
+      address: job.address ?? null,
+      city: job.city ?? null,
+      latitude: job.latitude ?? null,
+      longitude: job.longitude ?? null,
+      serviceTypeId: job.service_type_id ?? null,
+      state: job.state ?? null,
+      urgency: job.urgency ?? null,
     }));
 
     res.status(200).json(jobs);
