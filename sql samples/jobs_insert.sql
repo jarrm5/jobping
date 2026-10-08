@@ -1,2 +1,92 @@
-INSERT INTO "Job"(title, description, category, zip_code, status, homeowner_id, provider_id)
-	VALUES ('Millipede infestation in my basement', 'Looking for an extermintor for this issue.', 'Bug Extermintor', '64154', 'open', 1, NULL);
+INSERT INTO "Job"
+    (
+        title,
+        description,
+        urgency,
+        status,
+        homeowner_id,
+        provider_id,
+        service_type_id,
+        address,
+        city,
+        state,
+        zip_code,
+        latitude,
+        longitude
+    )
+VALUES
+    (
+        'Need lawn mowed',
+        'Front and back yard need mowing. Grass is getting pretty high.',
+        'WITHIN_WEEK',
+        'OPEN',
+        1,
+        NULL,
+        1,
+        '123 Maple St',
+        'Omaha',
+        'NE',
+        '68104',
+        41.2867,
+        -96.0435
+    ),
+    (
+        'Clean gutters',
+        'Two-story house. Need gutters cleaned before winter.',
+        'FLEXIBLE',
+        'OPEN',
+        2,
+        NULL,
+        5,
+        '456 Oak Ave',
+        'Omaha',
+        'NE',
+        '68114',
+        41.2520,
+        -96.0710
+    ),
+    (
+        'Chimney needs cleaning',
+        'Looking for someone to clean and inspect residential chimney.',
+        'ASAP',
+        'OPEN',
+        3,
+        NULL,
+        3,
+        '789 Pine St',
+        'Omaha',
+        'NE',
+        '68124',
+        41.2350,
+        -96.0550
+    ),
+    (
+        'Replace broken window',
+        'Interior window on back door is cracked and needs replacement.',
+        'WITHIN_WEEK',
+        'OPEN',
+        1,
+        NULL,
+        4,
+        '123 Maple St',
+        'Omaha',
+        'NE',
+        '68104',
+        41.2867,
+        -96.0435
+    ),
+    (
+        'Power wash driveway',
+        'Concrete driveway needs a thorough pressure washing.',
+        'FLEXIBLE',
+        'OPEN',
+        2,
+        NULL,
+        2,
+        '456 Oak Ave',
+        'Omaha',
+        'NE',
+        '68114',
+        41.2520,
+        -96.0710
+    );
