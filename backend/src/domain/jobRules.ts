@@ -14,7 +14,7 @@ function normalizeStatus(status: string | null | undefined): string | null {
   return String(status).trim().toUpperCase();
 }
 
-export function validateJobUpdateRules(
+function validateJobState(
   currentJob: JobState,
   updates: Record<string, any>,
 ): Record<string, any> {
@@ -30,7 +30,12 @@ export function validateJobUpdateRules(
       ? null
       : Number(rawProviderId);
 
-  if (nextStatus && !Object.values(JobStatus).map((value) => value.toUpperCase()).includes(nextStatus)) {
+  if (
+    nextStatus &&
+    !Object.values(JobStatus)
+      .map((value) => value.toUpperCase())
+      .includes(nextStatus)
+  ) {
     throw new Error(`Invalid status: ${nextStatus}`);
   }
 
@@ -56,4 +61,23 @@ export function validateJobUpdateRules(
     status: nextStatus,
     provider_id: nextProviderId,
   };
+}
+
+export function validateJobUpdateRules(
+  currentJob: JobState,
+  updates: Record<string, any>,
+): Record<string, any> {
+  return validateJobState(currentJob, updates);
+}
+
+export function validateJobCreateRules(
+  payload: Record<string, any>,
+): Record<string, any> {
+  return validateJobState(
+    {},
+    {
+      ...payload,
+      status: payload.status ?? JobStatus.OPEN,
+    },
+  );
 }

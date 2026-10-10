@@ -1,9 +1,35 @@
 import { Router, type Request, type Response } from "express";
 import type { PrismaClient } from "../../prisma/generated/prisma/client.ts";
-import { updateJob } from "../services/jobService.ts";
+import { postJob, updateJob } from "../services/jobService.ts";
 
 export default function createJobsRouter(prisma: PrismaClient) {
   const router = Router();
+
+  router.post("/", async (req: Request, res: Response) => {
+    try {
+      const createdJob = await postJob(prisma, req.body || {});
+      return res.status(201).json(createdJob);
+    } catch (err: any) {
+      console.error(err);
+
+      if (
+        err?.message?.includes("CLAIMED and COMPLETED jobs require a providerId") ||
+        err?.message?.includes("Invalid status") ||
+        err?.message?.includes("Invalid urgency") ||
+        err?.message?.includes("Job title is required") ||
+        err?.message?.includes("homeownerId is required") ||
+        err?.message?.includes("serviceTypeId is required")
+      ) {
+        return res.status(400).json({ error: err.message });
+      }
+
+      if (err?.code === "P2003" || err?.code === "P2025") {
+        return res.status(400).json({ error: err.message });
+      }
+
+      return res.status(500).json({ error: "Failed to create job" });
+    }
+  });
 
   router.put("/:id", async (req: Request, res: Response) => {
     const id = Number(req.params.id);

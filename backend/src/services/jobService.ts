@@ -1,5 +1,68 @@
 import type { PrismaClient } from "../../prisma/generated/prisma/client.ts";
-import { validateJobUpdateRules } from "../domain/jobRules.ts";
+import { JobStatus, JobUrgency } from "../../prisma/generated/prisma/enums.ts";
+import {
+  validateJobCreateRules,
+  validateJobUpdateRules,
+} from "../domain/jobRules.ts";
+
+function normalizeUrgency(value: string | null | undefined): string {
+  const normalized = String(value ?? JobUrgency.ASAP)
+    .trim()
+    .toUpperCase();
+
+  if (!Object.values(JobUrgency).includes(normalized as JobUrgency)) {
+    throw new Error(`Invalid urgency: ${normalized}`);
+  }
+
+  return normalized;
+}
+
+export async function postJob(
+  prisma: PrismaClient,
+  payload: Record<string, any>,
+) {
+  const nextRuleState = validateJobCreateRules(payload);
+
+  const data: Record<string, any> = {
+    title: String(payload.title ?? "").trim(),
+    description: payload.description ?? null,
+    urgency: normalizeUrgency(payload.urgency ?? payload.urgency ?? JobUrgency.ASAP),
+    status: nextRuleState.status ?? JobStatus.OPEN,
+    homeowner_id: Number(payload.homeownerId ?? payload.homeowner_id),
+    service_type_id: Number(payload.serviceTypeId ?? payload.service_type_id),
+    address: payload.address ?? null,
+    city: payload.city ?? null,
+    state: payload.state ?? null,
+    zip_code: payload.zipCode ?? payload.zip_code ?? null,
+    latitude:
+      payload.latitude === undefined || payload.latitude === null
+        ? null
+        : Number(payload.latitude),
+    longitude:
+      payload.longitude === undefined || payload.longitude === null
+        ? null
+        : Number(payload.longitude),
+    provider_id: nextRuleState.provider_id ?? null,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  if (!data.title) {
+    throw new Error("Job title is required");
+  }
+
+  if (!Number.isFinite(data.homeowner_id)) {
+    throw new Error("homeownerId is required");
+  }
+
+  if (!Number.isFinite(data.service_type_id)) {
+    throw new Error("serviceTypeId is required");
+  }
+
+  return prisma.job.create({
+    data: data as any,
+  });
+}
 
 export async function updateJob(
   prisma: PrismaClient,
