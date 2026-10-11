@@ -2,6 +2,7 @@ import express, { type Express, type Request, type Response } from "express";
 import type { PrismaClient } from "../../prisma/generated/prisma/client.ts";
 import { configureCors } from "./cors.ts";
 import createJobsRouter from "../routes/jobs.ts";
+import createProvidersRouter from "../routes/providers.ts";
 
 export function createApp(prisma: PrismaClient): Express {
   const app = express();
@@ -14,6 +15,7 @@ export function createApp(prisma: PrismaClient): Express {
   });
 
   app.use("/jobs", createJobsRouter(prisma));
+  app.use("/providers", createProvidersRouter(prisma));
 
   return app;
 }
