@@ -11,14 +11,16 @@ export default function createJobsRouter(prisma: PrismaClient) {
       return res.status(201).json(createdJob);
     } catch (err: any) {
       console.error(err);
-
+      const { errorMessage } = err;
       if (
-        err?.message?.includes("CLAIMED and COMPLETED jobs require a providerId") ||
-        err?.message?.includes("Invalid status") ||
-        err?.message?.includes("Invalid urgency") ||
-        err?.message?.includes("Job title is required") ||
-        err?.message?.includes("homeownerId is required") ||
-        err?.message?.includes("serviceTypeId is required")
+        errorMessage?.includes(
+          "CLAIMED and COMPLETED jobs require a providerId",
+        ) ||
+        errorMessage?.includes("Invalid status") ||
+        errorMessage?.includes("Invalid urgency") ||
+        errorMessage?.includes("Job title is required") ||
+        errorMessage?.includes("homeownerId is required") ||
+        errorMessage?.includes("serviceTypeId is required")
       ) {
         return res.status(400).json({ error: err.message });
       }
@@ -49,7 +51,9 @@ export default function createJobsRouter(prisma: PrismaClient) {
 
       if (
         err?.message?.includes("OPEN jobs cannot have a providerId") ||
-        err?.message?.includes("CLAIMED and COMPLETED jobs require a providerId") ||
+        err?.message?.includes(
+          "CLAIMED and COMPLETED jobs require a providerId",
+        ) ||
         err?.message?.includes("Invalid status")
       ) {
         return res.status(400).json({ error: err.message });

@@ -122,3 +122,15 @@ model Job {
   @@index([zip_code])
 }
 
+model ZipCodeLocation {
+  id        String   @id @default(uuid()) @db.Uuid
+  zipCode   String   @unique @map("zip_code") @db.VarChar(10)
+  latitude  Float
+  longitude Float
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("zip_code_locations")
+  @@index([latitude, longitude])
+}
+
