@@ -26,3 +26,20 @@ export async function getCoordinatesFromZip(
     longitude: Number(place.longitude),
   };
 }
+
+/* Sample response
+
+{
+    "country": "United States",
+    "country abbreviation": "US",
+    "post code": "64154",
+    "places": [
+        {
+            "place name": "Kansas City",
+            "longitude": "-94.6354",
+            "latitude": "39.2547",
+            "state": "Missouri",
+            "state abbreviation": "MO"
+        }
+    ]
+*/
