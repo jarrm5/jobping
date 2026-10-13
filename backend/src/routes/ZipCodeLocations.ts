@@ -4,16 +4,16 @@ import type { PrismaClient } from "../../prisma/generated/prisma/client.ts";
 export default function createZipCodeLocationsRouter(prisma: PrismaClient) {
   const router = Router();
 
-  router.get("/:id", async (req: Request, res: Response) => {
-    const id = req.params.id;
+  router.get("/:zip", async (req: Request, res: Response) => {
+    const zip = req.params.zip;
 
-    if (typeof id !== "string") {
-      return res.status(400).json({ error: "Invalid ZIP code location id" });
+    if (typeof zip !== "string") {
+      return res.status(400).json({ error: "Invalid ZIP code location zip" });
     }
 
     try {
       const zipCodeLocation = await prisma.zipCodeLocation.findUnique({
-        where: { id },
+        where: { zipCode: zip },
       });
 
       if (!zipCodeLocation) {
