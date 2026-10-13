@@ -4,6 +4,7 @@ import {
   validateJobCreateRules,
   validateJobUpdateRules,
 } from "../domain/jobRules.ts";
+import { getCoordinatesFromZip } from "./GeocodingService.ts";
 
 function normalizeUrgency(value: string | null | undefined): string {
   const normalized = String(value ?? JobUrgency.ASAP)
@@ -17,16 +18,80 @@ function normalizeUrgency(value: string | null | undefined): string {
   return normalized;
 }
 
+async function resolveJobCoordinates(
+  prisma: PrismaClient,
+  payload: Record<string, any>,
+) {
+  const zipCode = String(payload.zipCode ?? payload.zip_code ?? "").trim();
+
+  const incomingLatitude =
+    payload.latitude === undefined ||
+    payload.latitude === null ||
+    payload.latitude === ""
+      ? null
+      : Number(payload.latitude);
+
+  const incomingLongitude =
+    payload.longitude === undefined ||
+    payload.longitude === null ||
+    payload.longitude === ""
+      ? null
+      : Number(payload.longitude);
+
+  if (!zipCode) {
+    return {
+      latitude: incomingLatitude,
+      longitude: incomingLongitude,
+    };
+  }
+
+  if (incomingLatitude !== null && incomingLongitude !== null) {
+    return {
+      latitude: incomingLatitude,
+      longitude: incomingLongitude,
+    };
+  }
+
+  const zipLocation = await prisma.zipCodeLocation?.findUnique?.({
+    where: { zipCode },
+  });
+
+  if (zipLocation) {
+    return {
+      latitude: incomingLatitude ?? Number(zipLocation.latitude),
+      longitude: incomingLongitude ?? Number(zipLocation.longitude),
+    };
+  }
+
+  const geoCoordinates = await getCoordinatesFromZip(zipCode);
+
+  await prisma.zipCodeLocation?.create?.({
+    data: {
+      zipCode,
+      latitude: geoCoordinates.latitude,
+      longitude: geoCoordinates.longitude,
+    },
+  });
+
+  return {
+    latitude: incomingLatitude ?? geoCoordinates.latitude,
+    longitude: incomingLongitude ?? geoCoordinates.longitude,
+  };
+}
+
 export async function postJob(
   prisma: PrismaClient,
   payload: Record<string, any>,
 ) {
   const nextRuleState = validateJobCreateRules(payload);
+  const { latitude, longitude } = await resolveJobCoordinates(prisma, payload);
 
   const data: Record<string, any> = {
     title: String(payload.title ?? "").trim(),
     description: payload.description ?? null,
-    urgency: normalizeUrgency(payload.urgency ?? payload.urgency ?? JobUrgency.ASAP),
+    urgency: normalizeUrgency(
+      payload.urgency ?? payload.urgency ?? JobUrgency.ASAP,
+    ),
     status: nextRuleState.status ?? JobStatus.OPEN,
     homeowner_id: Number(payload.homeownerId ?? payload.homeowner_id),
     service_type_id: Number(payload.serviceTypeId ?? payload.service_type_id),
@@ -34,14 +99,8 @@ export async function postJob(
     city: payload.city ?? null,
     state: payload.state ?? null,
     zip_code: payload.zipCode ?? payload.zip_code ?? null,
-    latitude:
-      payload.latitude === undefined || payload.latitude === null
-        ? null
-        : Number(payload.latitude),
-    longitude:
-      payload.longitude === undefined || payload.longitude === null
-        ? null
-        : Number(payload.longitude),
+    latitude,
+    longitude,
     provider_id: nextRuleState.provider_id ?? null,
     created_at: new Date(),
     updated_at: new Date(),
