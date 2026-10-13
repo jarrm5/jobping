@@ -24,33 +24,33 @@ async function resolveJobCoordinates(
 ) {
   const zipCode = String(payload.zipCode ?? payload.zip_code ?? "").trim();
 
-  const incomingLatitude =
-    payload.latitude === undefined ||
-    payload.latitude === null ||
-    payload.latitude === ""
-      ? null
-      : Number(payload.latitude);
+  // const incomingLatitude =
+  //   payload.latitude === undefined ||
+  //   payload.latitude === null ||
+  //   payload.latitude === ""
+  //     ? null
+  //     : Number(payload.latitude);
 
-  const incomingLongitude =
-    payload.longitude === undefined ||
-    payload.longitude === null ||
-    payload.longitude === ""
-      ? null
-      : Number(payload.longitude);
+  // const incomingLongitude =
+  //   payload.longitude === undefined ||
+  //   payload.longitude === null ||
+  //   payload.longitude === ""
+  //     ? null
+  //     : Number(payload.longitude);
 
-  if (!zipCode) {
-    return {
-      latitude: incomingLatitude,
-      longitude: incomingLongitude,
-    };
-  }
+  // if (!zipCode) {
+  //   return {
+  //     latitude: incomingLatitude,
+  //     longitude: incomingLongitude,
+  //   };
+  // }
 
-  if (incomingLatitude !== null && incomingLongitude !== null) {
-    return {
-      latitude: incomingLatitude,
-      longitude: incomingLongitude,
-    };
-  }
+  // if (incomingLatitude !== null && incomingLongitude !== null) {
+  //   return {
+  //     latitude: incomingLatitude,
+  //     longitude: incomingLongitude,
+  //   };
+  // }
 
   const zipLocation = await prisma.zipCodeLocation?.findUnique?.({
     where: { zipCode },
@@ -58,8 +58,10 @@ async function resolveJobCoordinates(
 
   if (zipLocation) {
     return {
-      latitude: incomingLatitude ?? Number(zipLocation.latitude),
-      longitude: incomingLongitude ?? Number(zipLocation.longitude),
+      //latitude: incomingLatitude ?? Number(zipLocation.latitude),
+      latitude: Number(zipLocation.latitude),
+      //longitude: incomingLongitude ?? Number(zipLocation.longitude),
+      longitude: Number(zipLocation.longitude),
     };
   }
 
@@ -70,12 +72,20 @@ async function resolveJobCoordinates(
       zipCode,
       latitude: geoCoordinates.latitude,
       longitude: geoCoordinates.longitude,
+      placeName: geoCoordinates.placeName,
+      state: geoCoordinates.state,
+      stateAbbreviation: geoCoordinates.stateAbbreviation,
     },
   });
 
   return {
-    latitude: incomingLatitude ?? geoCoordinates.latitude,
-    longitude: incomingLongitude ?? geoCoordinates.longitude,
+    //latitude: incomingLatitude ?? geoCoordinates.latitude,
+    latitude: Number(geoCoordinates.latitude),
+    //longitude: incomingLongitude ?? geoCoordinates.longitude,
+    longitude: Number(geoCoordinates.longitude),
+    city: geoCoordinates.placeName ?? null,
+    state: geoCoordinates.state ?? null,
+    stateAbbreviation: geoCoordinates.stateAbbreviation ?? null,
   };
 }
 
@@ -141,8 +151,8 @@ export async function updateJob(
   if ("title" in payload) data.title = payload.title;
   if ("description" in payload) data.description = payload.description;
   if ("category" in payload) data.category = payload.category;
-  if ("zipcode" in payload) data.zip_code = payload.zipcode ?? payload.zipCode;
-  if ("zipCode" in payload) data.zip_code = payload.zipCode;
+  if ("zipcode" in payload || "zipCode" in payload)
+    data.zip_code = payload.zipcode ?? payload.zipCode;
   if ("address" in payload) data.address = payload.address;
   if ("city" in payload) data.city = payload.city;
   if ("state" in payload) data.state = payload.state;
