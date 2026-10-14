@@ -24,34 +24,6 @@ async function resolveJobCoordinates(
 ) {
   const zipCode = String(payload.zipCode ?? payload.zip_code ?? "").trim();
 
-  // const incomingLatitude =
-  //   payload.latitude === undefined ||
-  //   payload.latitude === null ||
-  //   payload.latitude === ""
-  //     ? null
-  //     : Number(payload.latitude);
-
-  // const incomingLongitude =
-  //   payload.longitude === undefined ||
-  //   payload.longitude === null ||
-  //   payload.longitude === ""
-  //     ? null
-  //     : Number(payload.longitude);
-
-  // if (!zipCode) {
-  //   return {
-  //     latitude: incomingLatitude,
-  //     longitude: incomingLongitude,
-  //   };
-  // }
-
-  // if (incomingLatitude !== null && incomingLongitude !== null) {
-  //   return {
-  //     latitude: incomingLatitude,
-  //     longitude: incomingLongitude,
-  //   };
-  // }
-
   const zipLocation = await prisma.zipCodeLocation?.findUnique?.({
     where: { zipCode },
   });
@@ -90,7 +62,10 @@ export async function postJob(
   payload: Record<string, any>,
 ) {
   const nextRuleState = validateJobCreateRules(payload);
-  const { latitude, longitude } = await resolveJobCoordinates(prisma, payload);
+  const { latitude, longitude, city, state } = await resolveJobCoordinates(
+    prisma,
+    payload,
+  );
 
   const data: Record<string, any> = {
     title: String(payload.title ?? "").trim(),
@@ -102,8 +77,8 @@ export async function postJob(
     homeowner_id: Number(payload.homeownerId ?? payload.homeowner_id),
     service_type_id: Number(payload.serviceTypeId ?? payload.service_type_id),
     address: payload.address ?? null,
-    city: payload.city ?? null,
-    state: payload.state ?? null,
+    city,
+    state,
     zip_code: payload.zipCode ?? payload.zip_code ?? null,
     latitude,
     longitude,
