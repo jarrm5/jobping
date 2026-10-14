@@ -1,9 +1,8 @@
 interface Coordinates {
   latitude: number;
   longitude: number;
-  placeName?: string;
+  city?: string;
   state?: string;
-  stateAbbreviation?: string;
 }
 
 export async function getCoordinatesFromZip(
@@ -27,9 +26,8 @@ export async function getCoordinatesFromZip(
   return {
     latitude: Number(place.latitude),
     longitude: Number(place.longitude),
-    placeName: place["place name"],
-    state: place.state,
-    stateAbbreviation: place["state abbreviation"],
+    city: place["place name"],
+    state: place["state abbreviation"],
   };
 }
 

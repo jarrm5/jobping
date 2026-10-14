@@ -58,10 +58,10 @@ async function resolveJobCoordinates(
 
   if (zipLocation) {
     return {
-      //latitude: incomingLatitude ?? Number(zipLocation.latitude),
       latitude: Number(zipLocation.latitude),
-      //longitude: incomingLongitude ?? Number(zipLocation.longitude),
       longitude: Number(zipLocation.longitude),
+      city: zipLocation.city ?? null,
+      state: zipLocation.state ?? null,
     };
   }
 
@@ -72,20 +72,16 @@ async function resolveJobCoordinates(
       zipCode,
       latitude: geoCoordinates.latitude,
       longitude: geoCoordinates.longitude,
-      placeName: geoCoordinates.placeName,
-      state: geoCoordinates.state,
-      stateAbbreviation: geoCoordinates.stateAbbreviation,
+      city: geoCoordinates.city ?? null,
+      state: geoCoordinates.state ?? null,
     },
   });
 
   return {
-    //latitude: incomingLatitude ?? geoCoordinates.latitude,
     latitude: Number(geoCoordinates.latitude),
-    //longitude: incomingLongitude ?? geoCoordinates.longitude,
     longitude: Number(geoCoordinates.longitude),
-    city: geoCoordinates.placeName ?? null,
+    city: geoCoordinates.city ?? null,
     state: geoCoordinates.state ?? null,
-    stateAbbreviation: geoCoordinates.stateAbbreviation ?? null,
   };
 }
 

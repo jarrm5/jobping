@@ -127,6 +127,8 @@ model ZipCodeLocation {
   zipCode   String   @unique @map("zip_code") @db.VarChar(10)
   latitude  Float
   longitude Float
+  city      String?
+  state     String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
