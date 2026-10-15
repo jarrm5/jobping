@@ -126,6 +126,8 @@ export async function updateJob(
 
   const data: Record<string, any> = {};
 
+  const nextRuleState = validateJobUpdateRules(currentJob, payload);
+
   if ("title" in payload) data.title = payload.title;
   if ("description" in payload) data.description = payload.description;
   if ("category" in payload) data.category = payload.category;
@@ -141,10 +143,6 @@ export async function updateJob(
     data.longitude = longitude;
   }
   if ("address" in payload) data.address = payload.address;
-  //if ("city" in payload) data.city = payload.city;
-  //if ("state" in payload) data.state = payload.state;
-  //if ("latitude" in payload) data.latitude = Number(payload.latitude);
-  //if ("longitude" in payload) data.longitude = Number(payload.longitude);
 
   if ("serviceTypeId" in payload || "service_type_id" in payload) {
     data.service_type_id = Number(
@@ -154,8 +152,6 @@ export async function updateJob(
   if ("homeownerId" in payload || "homeowner_id" in payload) {
     data.homeowner_id = Number(payload.homeownerId ?? payload.homeowner_id);
   }
-
-  const nextRuleState = validateJobUpdateRules(currentJob, payload);
 
   if ("status" in payload) {
     data.status = nextRuleState.status;
