@@ -22,7 +22,9 @@ async function resolveJobCoordinates(
   prisma: PrismaClient,
   payload: Record<string, any>,
 ) {
-  const zipCode = String(payload.zipCode ?? payload.zip_code ?? "").trim();
+  const zipCode = String(
+    payload.zipCode ?? payload.zip_code ?? payload.zipcode ?? "",
+  ).trim();
 
   const zipLocation = await prisma.zipCodeLocation?.findUnique?.({
     where: { zipCode },
@@ -104,6 +106,11 @@ export async function postJob(
   });
 }
 
+/*
+Should only be able to update zip code - then we lookup the coordinates, city, state from zip_code_locations.  If not there then we do the lookup, add the zip code, update the job.
+Reuse logic from job posting.
+*/
+
 export async function updateJob(
   prisma: PrismaClient,
   jobId: number,
@@ -122,13 +129,23 @@ export async function updateJob(
   if ("title" in payload) data.title = payload.title;
   if ("description" in payload) data.description = payload.description;
   if ("category" in payload) data.category = payload.category;
-  if ("zipcode" in payload || "zipCode" in payload)
+  if ("zipcode" in payload || "zipCode" in payload) {
+    const { latitude, longitude, city, state } = await resolveJobCoordinates(
+      prisma,
+      payload,
+    );
     data.zip_code = payload.zipcode ?? payload.zipCode;
+    data.city = city;
+    data.state = state;
+    data.latitude = latitude;
+    data.longitude = longitude;
+  }
   if ("address" in payload) data.address = payload.address;
-  if ("city" in payload) data.city = payload.city;
-  if ("state" in payload) data.state = payload.state;
-  if ("latitude" in payload) data.latitude = Number(payload.latitude);
-  if ("longitude" in payload) data.longitude = Number(payload.longitude);
+  //if ("city" in payload) data.city = payload.city;
+  //if ("state" in payload) data.state = payload.state;
+  //if ("latitude" in payload) data.latitude = Number(payload.latitude);
+  //if ("longitude" in payload) data.longitude = Number(payload.longitude);
+
   if ("serviceTypeId" in payload || "service_type_id" in payload) {
     data.service_type_id = Number(
       payload.serviceTypeId ?? payload.service_type_id,
