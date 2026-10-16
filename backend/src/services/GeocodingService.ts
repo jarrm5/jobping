@@ -13,14 +13,14 @@ export async function getCoordinatesFromZip(
   );
 
   if (!response.ok) {
-    throw new Error("Unable to find coordinates for ZIP code");
+    throw new Error(`Failed to fetch coordinates for ZIP code: ${zipCode}`);
   }
 
   const data = await response.json();
   const place = data.places?.[0];
 
   if (!place) {
-    throw new Error("No location found for ZIP code");
+    throw new Error(`No location found for ZIP code: ${zipCode}`);
   }
 
   return {

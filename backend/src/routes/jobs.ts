@@ -11,7 +11,7 @@ export default function createJobsRouter(prisma: PrismaClient) {
       return res.status(201).json(createdJob);
     } catch (err: any) {
       console.error(err);
-      const { errorMessage } = err;
+      const errorMessage = err?.message;
       if (
         errorMessage?.includes(
           "CLAIMED and COMPLETED jobs require a providerId",
@@ -29,7 +29,9 @@ export default function createJobsRouter(prisma: PrismaClient) {
         return res.status(400).json({ error: err.message });
       }
 
-      return res.status(500).json({ error: "Failed to create job" });
+      return res
+        .status(500)
+        .json({ error: errorMessage || "Failed to create job" });
     }
   });
 
@@ -63,7 +65,9 @@ export default function createJobsRouter(prisma: PrismaClient) {
         return res.status(404).json({ error: "Job not found" });
       }
 
-      return res.status(500).json({ error: "Failed to update job" });
+      return res
+        .status(500)
+        .json({ error: err?.message || "Failed to update job" });
     }
   });
 
