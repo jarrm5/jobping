@@ -4,7 +4,7 @@ import {
   validateJobCreateRules,
   validateJobUpdateRules,
 } from "../domain/jobRules.ts";
-import { getCoordinatesFromZip } from "./GeocodingService.ts";
+import { resolveCoordinatesFromZip } from "./locationService.ts";
 
 function normalizeUrgency(value: string | null | undefined): string {
   const normalized = String(value ?? JobUrgency.ASAP)
@@ -25,38 +25,7 @@ async function resolveJobCoordinates(
   const zipCode = String(
     payload.zipCode ?? payload.zip_code ?? payload.zipcode ?? "",
   ).trim();
-
-  const zipLocation = await prisma.zipCodeLocation?.findUnique?.({
-    where: { zipCode },
-  });
-
-  if (zipLocation) {
-    return {
-      latitude: Number(zipLocation.latitude),
-      longitude: Number(zipLocation.longitude),
-      city: zipLocation.city ?? null,
-      state: zipLocation.state ?? null,
-    };
-  }
-
-  const geoCoordinates = await getCoordinatesFromZip(zipCode);
-
-  await prisma.zipCodeLocation?.create?.({
-    data: {
-      zipCode,
-      latitude: geoCoordinates.latitude,
-      longitude: geoCoordinates.longitude,
-      city: geoCoordinates.city ?? null,
-      state: geoCoordinates.state ?? null,
-    },
-  });
-
-  return {
-    latitude: Number(geoCoordinates.latitude),
-    longitude: Number(geoCoordinates.longitude),
-    city: geoCoordinates.city ?? null,
-    state: geoCoordinates.state ?? null,
-  };
+  return resolveCoordinatesFromZip(prisma, zipCode);
 }
 
 export async function postJob(
@@ -105,11 +74,6 @@ export async function postJob(
     data: data as any,
   });
 }
-
-/*
-Should only be able to update zip code - then we lookup the coordinates, city, state from zip_code_locations.  If not there then we do the lookup, add the zip code, update the job.
-Reuse logic from job posting.
-*/
 
 export async function updateJob(
   prisma: PrismaClient,

@@ -138,6 +138,8 @@ test("postJob geocodes missing zip coordinates and saves them to zip_code_locati
       zipCode: "64154",
       latitude: 39.2547,
       longitude: -94.6354,
+      city: null,
+      state: null,
     });
   } finally {
     global.fetch = originalFetch;
