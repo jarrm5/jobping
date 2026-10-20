@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { postProvider } from "./providersService.ts";
+import { postProvider } from "../providersService.ts";
 
 test("postProvider uses the cached ZIP location instead of submitted location data", async () => {
   let providerData: any;

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { postJob } from "./jobService.ts";
+import { postJob } from "../jobService.ts";
 
 const makePrisma = (created: any) =>
   ({

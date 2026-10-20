@@ -1,5 +1,5 @@
 import type { PrismaClient } from "../../prisma/generated/prisma/client.ts";
-import { getCoordinatesFromZip } from "./GeocodingService.ts";
+import { getCoordinatesFromZip } from "./geocodingService.ts";
 
 export async function resolveCoordinatesFromZip(
   prisma: PrismaClient,
