@@ -18,24 +18,17 @@ function normalizeUrgency(value: string | null | undefined): string {
   return normalized;
 }
 
-async function resolveJobCoordinates(
-  prisma: PrismaClient,
-  payload: Record<string, any>,
-) {
-  const zipCode = String(
-    payload.zipCode ?? payload.zip_code ?? payload.zipcode ?? "",
-  ).trim();
-  return resolveCoordinatesFromZip(prisma, zipCode);
-}
-
 export async function postJob(
   prisma: PrismaClient,
   payload: Record<string, any>,
 ) {
   const nextRuleState = validateJobCreateRules(payload);
-  const { latitude, longitude, city, state } = await resolveJobCoordinates(
+
+  const rawZipCode = payload.zip_code ?? payload.zipCode ?? payload.zipcode;
+  const zipCode = rawZipCode == null ? "" : String(rawZipCode).trim();
+  const { city, state, latitude, longitude } = await resolveCoordinatesFromZip(
     prisma,
-    payload,
+    zipCode,
   );
 
   const data: Record<string, any> = {
@@ -50,7 +43,7 @@ export async function postJob(
     address: payload.address ?? null,
     city,
     state,
-    zip_code: payload.zipCode ?? payload.zip_code ?? null,
+    zip_code: zipCode,
     latitude,
     longitude,
     provider_id: nextRuleState.provider_id ?? null,
@@ -89,17 +82,17 @@ export async function updateJob(
   }
 
   const data: Record<string, any> = {};
-
   const nextRuleState = validateJobUpdateRules(currentJob, payload);
+
+  const rawZipCode = payload.zip_code ?? payload.zipCode ?? payload.zipcode;
+  const zipCode = rawZipCode == null ? "" : String(rawZipCode).trim();
 
   if ("title" in payload) data.title = payload.title;
   if ("description" in payload) data.description = payload.description;
   if ("category" in payload) data.category = payload.category;
   if ("zipcode" in payload || "zipCode" in payload) {
-    const { latitude, longitude, city, state } = await resolveJobCoordinates(
-      prisma,
-      payload,
-    );
+    const { latitude, longitude, city, state } =
+      await resolveCoordinatesFromZip(prisma, zipCode);
     data.zip_code = payload.zipcode ?? payload.zipCode;
     data.city = city;
     data.state = state;

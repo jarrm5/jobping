@@ -62,7 +62,9 @@ export default function createProvidersRouter(prisma: PrismaClient) {
           .json({ error: "Provider with this email already exists" });
       }
 
-      return res.status(500).json({ error: "Failed to create provider" });
+      return res
+        .status(500)
+        .json({ error: err?.message || "Failed to create provider" });
     }
   });
 

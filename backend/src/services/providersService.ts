@@ -15,20 +15,21 @@ export async function postProvider(
 ) {
   const rawZipCode = payload.zip_code ?? payload.zipCode ?? payload.zipcode;
   const zipCode = rawZipCode == null ? "" : String(rawZipCode).trim();
-  const location = zipCode
-    ? await resolveCoordinatesFromZip(prisma, zipCode)
-    : null;
+  const { city, state, latitude, longitude } = await resolveCoordinatesFromZip(
+    prisma,
+    zipCode,
+  );
 
   return prisma.provider.create({
     data: {
       name: payload.name,
       email: payload.email,
       password: payload.password,
-      city: location ? location.city : (payload.city ?? null),
-      state: location ? location.state : (payload.state ?? null),
-      zip_code: location?.zipCode ?? rawZipCode ?? null,
-      latitude: location?.latitude ?? payload.latitude ?? null,
-      longitude: location?.longitude ?? payload.longitude ?? null,
+      city,
+      state,
+      zip_code: zipCode,
+      latitude,
+      longitude,
       service_radius: payload.service_radius ?? 10,
     },
   });
