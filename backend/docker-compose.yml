@@ -4,7 +4,7 @@ postgres:
   restart: always
   environment:
     POSTGRES_USER: jobping-admin
-    POSTGRES_PASSWORD: pecan5022
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     POSTGRES_DB: jobping
   ports:
     - "5432:5432"
