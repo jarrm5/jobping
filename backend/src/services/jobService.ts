@@ -99,6 +99,10 @@ export async function updateJob(
     data.latitude = latitude;
     data.longitude = longitude;
   }
+  data.urgency = normalizeUrgency(
+    payload.urgency ?? payload.urgency ?? JobUrgency.ASAP,
+  );
+
   if ("address" in payload) data.address = payload.address;
 
   if ("serviceTypeId" in payload || "service_type_id" in payload) {
