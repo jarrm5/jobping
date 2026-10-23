@@ -4,6 +4,7 @@ import {
   getProvider,
   getProviders,
   postProvider,
+  updateProvider,
 } from "../services/providersService.ts";
 
 export default function createProvidersRouter(prisma: PrismaClient) {
@@ -65,6 +66,29 @@ export default function createProvidersRouter(prisma: PrismaClient) {
       return res
         .status(500)
         .json({ error: err?.message || "Failed to create provider" });
+    }
+  });
+
+  router.put("/:id", async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id)) {
+      return res.status(400).json({ error: "Invalid provider id" });
+    }
+
+    try {
+      const updatedProvider = await updateProvider(prisma, id, req.body || {});
+      return res.status(200).json(updatedProvider);
+    } catch (err: any) {
+      console.error(err);
+
+      if (err?.message === "Provider not found") {
+        return res.status(404).json({ error: "Provider not found" });
+      }
+
+      return res
+        .status(500)
+        .json({ error: err?.message || "Failed to update provider" });
     }
   });
 
