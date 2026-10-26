@@ -90,15 +90,17 @@ export async function updateJob(
   if ("title" in payload) data.title = payload.title;
   if ("description" in payload) data.description = payload.description;
   if ("category" in payload) data.category = payload.category;
-  if ("zipcode" in payload || "zipCode" in payload) {
+
+  if (zipCode !== "") {
     const { latitude, longitude, city, state } =
       await resolveCoordinatesFromZip(prisma, zipCode);
-    data.zip_code = payload.zipcode ?? payload.zipCode;
+    data.zip_code = zipCode;
     data.city = city;
     data.state = state;
     data.latitude = latitude;
     data.longitude = longitude;
   }
+
   data.urgency = normalizeUrgency(
     payload.urgency ?? payload.urgency ?? JobUrgency.ASAP,
   );

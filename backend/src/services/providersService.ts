@@ -59,16 +59,15 @@ export async function updateProvider(
   if ("service_radius" in payload)
     data.service_radius = Number(payload.service_radius);
 
-  const { latitude, longitude, city, state } = await resolveCoordinatesFromZip(
-    prisma,
-    zipCode,
-  );
-  data.zip_code = zipCode;
-  data.city = city;
-  data.state = state;
-  data.latitude = latitude;
-  data.longitude = longitude;
-
+  if (zipCode !== "") {
+    const { latitude, longitude, city, state } =
+      await resolveCoordinatesFromZip(prisma, zipCode);
+    data.zip_code = zipCode;
+    data.city = city;
+    data.state = state;
+    data.latitude = latitude;
+    data.longitude = longitude;
+  }
   if (Object.keys(data).length === 0) {
     throw new Error("No valid fields to update");
   }
