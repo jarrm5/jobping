@@ -5,6 +5,37 @@ import { postJob, updateJob } from "../services/jobService.ts";
 export default function createJobsRouter(prisma: PrismaClient) {
   const router = Router();
 
+  router.get("/", async (req: Request, res: Response) => {
+    try {
+      const jobs = await prisma.job.findMany();
+      return res.status(200).json(jobs);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to fetch jobs" });
+    }
+  });
+
+  router.get("/:id", async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id)) {
+      return res.status(400).json({ error: "Invalid job id" });
+    }
+
+    try {
+      const job = await prisma.job.findUnique({ where: { id } });
+
+      if (!job) {
+        return res.status(404).json({ error: "Job not found" });
+      }
+
+      return res.status(200).json(job);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to fetch job" });
+    }
+  });
+
   router.post("/", async (req: Request, res: Response) => {
     try {
       const createdJob = await postJob(prisma, req.body || {});
@@ -69,31 +100,6 @@ export default function createJobsRouter(prisma: PrismaClient) {
         .status(500)
         .json({ error: err?.message || "Failed to update job" });
     }
-  });
-
-  router.get("/", async (req: Request, res: Response) => {
-    const allJobs = await prisma.job.findMany();
-
-    const jobs = allJobs.map((job) => ({
-      id: job.id,
-      title: job.title,
-      description: job.description,
-      zipcode: job.zip_code,
-      status: job.status,
-      homeownerId: job.homeowner_id,
-      providerId: job.provider_id ?? null,
-      createdAt: job.created_at,
-      updatedAt: job.updated_at,
-      address: job.address ?? null,
-      city: job.city ?? null,
-      latitude: job.latitude ?? null,
-      longitude: job.longitude ?? null,
-      serviceTypeId: job.service_type_id ?? null,
-      state: job.state ?? null,
-      urgency: job.urgency ?? null,
-    }));
-
-    res.status(200).json(jobs);
   });
 
   return router;

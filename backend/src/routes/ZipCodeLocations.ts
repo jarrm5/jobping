@@ -8,7 +8,9 @@ export default function createZipCodeLocationsRouter(prisma: PrismaClient) {
     const zip = req.params.zip;
 
     if (typeof zip !== "string") {
-      return res.status(400).json({ error: "Invalid ZIP code location zip" });
+      return res
+        .status(400)
+        .json({ error: "Invalid zip for ZIP Code location" });
     }
 
     try {

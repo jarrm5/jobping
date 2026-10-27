@@ -1,18 +1,13 @@
 import { Router, type Request, type Response } from "express";
 import type { PrismaClient } from "../../prisma/generated/prisma/client.ts";
-import {
-  getProvider,
-  getProviders,
-  postProvider,
-  updateProvider,
-} from "../services/providersService.ts";
+import { postProvider, updateProvider } from "../services/providersService.ts";
 
 export default function createProvidersRouter(prisma: PrismaClient) {
   const router = Router();
 
   router.get("/", async (req: Request, res: Response) => {
     try {
-      const providers = await getProviders(prisma);
+      const providers = await prisma.provider.findMany();
       return res.status(200).json(providers);
     } catch (err) {
       console.error(err);
@@ -28,7 +23,7 @@ export default function createProvidersRouter(prisma: PrismaClient) {
     }
 
     try {
-      const provider = await getProvider(prisma, id);
+      const provider = await prisma.provider.findUnique({ where: { id } });
 
       if (!provider) {
         return res.status(404).json({ error: "Provider not found" });
