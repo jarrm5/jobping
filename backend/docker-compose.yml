@@ -1,14 +1,18 @@
 services:
-postgres:
-  image: postgres:18.1
-  restart: always
-  environment:
-    POSTGRES_USER: jobping-admin
-    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    POSTGRES_DB: jobping
-  ports:
-    - "5432:5432"
-  volumes:
-    - jobping_data:/var/lib/postgresql
+  jobping-db:
+    image: postgres:18
+    container_name: jobping-db
+    restart: always
+    environment:
+      POSTGRES_USER: jobping-admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: jobping
+    ports:
+      - "5432:5432"
+    volumes:
+      - jobping_data:/var/lib/postgresql
+
 volumes:
   jobping_data:
+    external: true
+    name: jobping-data
